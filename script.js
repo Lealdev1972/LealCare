@@ -1,5 +1,5 @@
 // =====================================================
-// script.js - LealCare (Lista de Agendamentos Corrigida)
+// script.js - LealCare (Versão Final com Regras Corrigidas)
 // =====================================================
 
 let funcionarios = JSON.parse(localStorage.getItem("funcionarios")) || [];
@@ -11,12 +11,12 @@ window.abrirModal = function(id) {
     if (!modal) return;
 
     modal.style.display = "flex";
-
+    
     if (id === "loginInterno") {
         montarLoginArea();
     }
     if (id === "clientes") {
-        listarClientes();   // Garante que a lista seja carregada
+        listarClientes();
     }
 };
 
@@ -98,7 +98,7 @@ window.entrarFuncionario = function() {
     }, 800);
 };
 
-// ====================== AGENDAMENTO ======================
+// ====================== AGENDAMENTO - REGRAS CORRIGIDAS ======================
 window.salvarAgendamento = function() {
     const nome = document.getElementById("nome").value.trim();
     const email = document.getElementById("email").value.trim();
@@ -113,34 +113,47 @@ window.salvarAgendamento = function() {
         return;
     }
 
-    // Evitar duplicados
+    // === EVITAR DUPLICADOS (mesma data + mesma hora) ===
     const duplicado = clientes.some(c => 
-        c.nome.toLowerCase() === nome.toLowerCase() &&
-        c.pet.toLowerCase() === pet.toLowerCase() &&
-        c.data === data
+        c.data === data && c.horario === horario
     );
 
     if (duplicado) {
-        alert("Este agendamento já existe para este tutor e pet na mesma data.");
+        alert("Já existe um agendamento para esta data e horário.");
         return;
     }
 
-    // Limite de 10 por dia
+    // === LIMITAR A 10 AGENDAMENTOS POR DIA ===
     const agendamentosNoDia = clientes.filter(c => c.data === data).length;
+
     if (agendamentosNoDia >= 10) {
-        alert("Limite de 10 agendamentos por dia atingido para esta data.");
+        alert("Limite máximo de 10 agendamentos por dia foi atingido.");
         return;
     }
 
-    clientes.push({ nome, email, telefone, pet, tipo, data, horario });
+    // Salvar agendamento
+    clientes.push({
+        nome,
+        email,
+        telefone,
+        pet,
+        tipo,
+        data,
+        horario
+    });
+
     localStorage.setItem("clientes", JSON.stringify(clientes));
 
     alert("✅ Agendamento realizado com sucesso!");
 
+    // Limpa o formulário automaticamente
     limparFormularioAgendamento();
+
+    // Fecha o modal
     fecharModal("agendamento");
 };
 
+// Função para limpar o formulário
 function limparFormularioAgendamento() {
     document.getElementById("nome").value = "";
     document.getElementById("email").value = "";
@@ -149,25 +162,23 @@ function limparFormularioAgendamento() {
     document.getElementById("tipo").value = "";
     document.getElementById("data").value = "";
     document.getElementById("horario").value = "";
+    document.getElementById("msg").innerHTML = "";
 }
 
-// ====================== LISTA DE AGENDAMENTOS (CORRIGIDA) ======================
+// ====================== LISTA DE AGENDAMENTOS ======================
 function listarClientes() {
     const lista = document.getElementById("listaClientes");
     if (!lista) return;
 
-    const hoje = new Date().toISOString().split('T')[0]; // data de hoje
+    const hoje = new Date().toISOString().split('T')[0];
 
     const agendamentosHoje = clientes.filter(c => c.data === hoje);
-    const outrosAgendamentos = clientes.filter(c => c.data !== hoje);
+    const outros = clientes.filter(c => c.data !== hoje);
 
-    let html = "";
-
-    // === AGENDAMENTOS DO DIA ===
-    html += `<h4 style="margin:15px 0 10px; color:#166534;">📅 Agendamentos de Hoje (${agendamentosHoje.length})</h4>`;
+    let html = `<h4 style="margin:15px 0 10px; color:#166534;">📅 Agendamentos de Hoje (${agendamentosHoje.length})</h4>`;
 
     if (agendamentosHoje.length === 0) {
-        html += `<p style="color:#666; padding:10px 0;">Nenhum agendamento para hoje.</p>`;
+        html += `<p style="color:#666; padding:10px;">Nenhum agendamento para hoje.</p>`;
     } else {
         agendamentosHoje.forEach(c => {
             html += `
@@ -179,13 +190,12 @@ function listarClientes() {
         });
     }
 
-    // === OUTROS AGENDAMENTOS ===
-    html += `<h4 style="margin:25px 0 10px; color:#166534;">📋 Outros Agendamentos (${outrosAgendamentos.length})</h4>`;
+    html += `<h4 style="margin:25px 0 10px; color:#166534;">📋 Outros Agendamentos (${outros.length})</h4>`;
 
-    if (outrosAgendamentos.length === 0) {
+    if (outros.length === 0) {
         html += `<p style="color:#666;">Nenhum outro agendamento registrado.</p>`;
     } else {
-        outrosAgendamentos.forEach(c => {
+        outros.forEach(c => {
             html += `
                 <li style="padding:10px 0; border-bottom:1px solid #eee;">
                     <strong>${c.nome}</strong> — ${c.pet} (${c.tipo})<br>
