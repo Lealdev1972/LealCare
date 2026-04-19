@@ -1,5 +1,5 @@
 // =====================================================
-// script.js - LealCare (Versão Final Corrigida)
+// script.js - LealCare (Versão com Regras de Negócio)
 // =====================================================
 
 let funcionarios = JSON.parse(localStorage.getItem("funcionarios")) || [];
@@ -22,14 +22,14 @@ window.fecharModal = function(id) {
     if (modal) modal.style.display = "none";
 };
 
-// Fechar modal clicando fora
-document.addEventListener("click", function(e) {
+// Fechar ao clicar fora
+document.addEventListener("click", (e) => {
     if (e.target.classList.contains("modal")) {
         e.target.style.display = "none";
     }
 });
 
-// ====================== LOGIN - ACESSO INTERNO ======================
+// ====================== LOGIN ======================
 function montarLoginArea() {
     const area = document.getElementById("loginArea");
     if (!area) return;
@@ -44,7 +44,7 @@ function montarLoginArea() {
         `;
     } else {
         area.innerHTML = `
-            <h4>Identificação de Funcionário</h4>
+            <h4>Acesso Interno</h4>
             <div class="campo"><label>Usuário</label><input type="text" id="loginUser" placeholder="Seu usuário"></div>
             <div class="campo"><label>Senha</label><input type="password" id="loginSenha" placeholder="Sua senha"></div>
             <button class="btn-full" onclick="entrarFuncionario()">Entrar</button>
@@ -86,17 +86,16 @@ window.entrarFuncionario = function() {
         return;
     }
 
-    msg.textContent = "Acesso liberado! Carregando painel...";
+    msg.textContent = "Acesso liberado!";
     msg.style.color = "green";
 
     setTimeout(() => {
         fecharModal("loginInterno");
         abrirModal("clientes");
-        listarClientes();
     }, 800);
 };
 
-// ====================== AGENDAMENTO - CORRIGIDO ======================
+// ====================== AGENDAMENTO - COM REGRAS ======================
 window.salvarAgendamento = function() {
     const nome = document.getElementById("nome").value.trim();
     const email = document.getElementById("email").value.trim();
@@ -111,7 +110,27 @@ window.salvarAgendamento = function() {
         return;
     }
 
-    // Salva os dados
+    // === EVITAR DUPLICADOS ===
+    const duplicado = clientes.some(c => 
+        c.nome.toLowerCase() === nome.toLowerCase() &&
+        c.pet.toLowerCase() === pet.toLowerCase() &&
+        c.data === data
+    );
+
+    if (duplicado) {
+        alert("Este agendamento já existe para este tutor e pet na mesma data.");
+        return;
+    }
+
+    // === LIMITAR A 10 AGENDAMENTOS POR DIA ===
+    const agendamentosNoDia = clientes.filter(c => c.data === data).length;
+
+    if (agendamentosNoDia >= 10) {
+        alert("Limite de 10 agendamentos por dia atingido para esta data.");
+        return;
+    }
+
+    // Salvar
     clientes.push({
         nome,
         email,
@@ -124,17 +143,12 @@ window.salvarAgendamento = function() {
 
     localStorage.setItem("clientes", JSON.stringify(clientes));
 
-    // Mensagem de sucesso
     alert("✅ Agendamento realizado com sucesso!");
 
-    // Limpa o formulário automaticamente
     limparFormularioAgendamento();
-
-    // Fecha o modal
     fecharModal("agendamento");
 };
 
-// Função para limpar o formulário
 function limparFormularioAgendamento() {
     document.getElementById("nome").value = "";
     document.getElementById("email").value = "";
@@ -143,29 +157,48 @@ function limparFormularioAgendamento() {
     document.getElementById("tipo").value = "";
     document.getElementById("data").value = "";
     document.getElementById("horario").value = "";
-    document.getElementById("msg").innerHTML = "";
 }
 
-// ====================== LISTA DE AGENDAMENTOS ======================
+// ====================== PAINEL INTERNO ======================
 function listarClientes() {
     const lista = document.getElementById("listaClientes");
     if (!lista) return;
 
-    if (clientes.length === 0) {
-        lista.innerHTML = "<li style='padding:15px; color:#666;'>Nenhum agendamento registrado ainda.</li>";
-        return;
+    const hoje = new Date().toISOString().split('T')[0]; // data atual no formato YYYY-MM-DD
+
+    // Separar agendamentos do dia atual
+    const hojeLista = clientes.filter(c => c.data === hoje);
+    const outros = clientes.filter(c => c.data !== hoje);
+
+    let html = `<h4 style="margin:15px 0 10px; color:#166534;">Agendamentos de Hoje (${hojeLista.length})</h4>`;
+
+    if (hojeLista.length === 0) {
+        html += `<p style="color:#666; padding:10px;">Nenhum agendamento para hoje.</p>`;
+    } else {
+        hojeLista.forEach(c => {
+            html += `
+                <li style="background:#f0fdf4; padding:12px; margin:8px 0; border-radius:8px;">
+                    <strong>${c.nome}</strong> — ${c.pet} (${c.tipo})<br>
+                    📧 ${c.email} | 📞 ${c.telefone}<br>
+                    🕒 ${c.horario}
+                </li>`;
+        });
     }
 
-    let html = "";
-    clientes.forEach(c => {
-        html += `
-            <li style="padding:12px 0; border-bottom:1px solid #eee;">
-                <strong>${c.nome}</strong> — ${c.pet} (${c.tipo})<br>
-                📧 ${c.email} | 📞 ${c.telefone}<br>
-                📅 ${c.data} às ${c.horario}
-            </li>
-        `;
-    });
+    html += `<h4 style="margin:25px 0 10px; color:#166534;">Outros Agendamentos (${outros.length})</h4>`;
+
+    if (outros.length === 0) {
+        html += `<p style="color:#666;">Nenhum outro agendamento registrado.</p>`;
+    } else {
+        outros.forEach(c => {
+            html += `
+                <li style="padding:10px 0; border-bottom:1px solid #eee;">
+                    <strong>${c.nome}</strong> — ${c.pet} (${c.tipo})<br>
+                    📅 ${c.data} | 🕒 ${c.horario}
+                </li>`;
+        });
+    }
+
     lista.innerHTML = html;
 }
 
