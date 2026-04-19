@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LealCare | Clínica Veterinária Premium</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h1>LealCare</h1>
+                <span>Clínica Veterinária Premium</span>
+            </div>
+
+            <nav class="menu">
+                <a href="#inicio">Início</a>
+                <a href="#servicos">Serviços</a>
+                <a href="#contato">Contato</a>
+                
+                <button class="nav-btn primary" onclick="abrirModal('agendamento')">
+                    Agendar Consulta
+                </button>
+                <button class="nav-btn access" onclick="abrirModal('loginInterno')">
+                    Acesso Interno
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO com Logo -->
+    <section class="hero" id="inicio">
+        <div class="hero-overlay">
+            <div class="hero-content">
+                <!-- Logo corrigido - link direto funcional -->
+                <img src="/frontend/logo.png" alt="LealCare" class="hero-logo"
+                     alt="LealCare Centro Veterinário" 
+                     class="hero-logo">
+
+                <h1>Bem-vindo à LealCare</h1>
+                <p class="subtitle">Seu pet merece cuidado de excelência</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- DESTAQUES -->
+    <section class="destaques">
+        <div class="container">
+            <div class="grid-destaques">
+                <div class="destaque-item">🩺 Consultas Especializadas</div>
+                <div class="destaque-item">💉 Vacinação Completa</div>
+                <div class="destaque-item">🏥 Estrutura Moderna</div>
+                <div class="destaque-item">❤️ Atendimento Humanizado</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVIÇOS -->
+    <section class="servicos" id="servicos">
+        <div class="container">
+            <h2>Nossos Serviços</h2>
+            <div class="grid-servicos">
+                <div class="card-servico">Consultas Clínicas</div>
+                <div class="card-servico">Vacinação e Vermifugação</div>
+                <div class="card-servico">Exames Laboratoriais</div>
+                <div class="card-servico">Cirurgias</div>
+                <div class="card-servico">Internação 24h</div>
+                <div class="card-servico">Banho e Tosa</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTATO -->
+    <section class="contato" id="contato">
+        <div class="container">
+            <h2>Entre em Contato</h2>
+            <div class="contato-info">
+                <p>📍 Guarulhos - SP</p>
+                <p>📞 (11) 99999-9999</p>
+                <p>✉ contato@lealcare.com.br</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 LealCare Clínica Veterinária • Todos os direitos reservados</p>
+        </div>
+    </footer>
+
+    <!-- Modais -->
+    <div class="modal" id="agendamento">
+        <div class="box">
+            <span class="close" onclick="fecharModal('agendamento')">✕</span>
+            <h3>Agendar Consulta</h3>
+            <p>Preencha os dados para agendar o atendimento do seu pet.</p>
+
+            <div class="form-grid">
+                <div class="campo"><label for="nome">Nome do Tutor *</label><input type="text" id="nome"></div>
+                <div class="campo"><label for="email">E-mail *</label><input type="email" id="email"></div>
+                <div class="campo"><label for="telefone">Telefone / WhatsApp *</label><input type="tel" id="telefone"></div>
+                <div class="campo"><label for="pet">Nome do Pet *</label><input type="text" id="pet"></div>
+                <div class="campo"><label for="tipo">Espécie</label>
+                    <select id="tipo">
+                        <option value="">Selecione...</option>
+                        <option value="Cachorro">Cachorro</option>
+                        <option value="Gato">Gato</option>
+                        <option value="Ave">Ave</option>
+                        <option value="Outro">Outro</option>
+                    </select>
+                </div>
+                <div class="campo"><label for="data">Data *</label><input type="date" id="data"></div>
+                <div class="campo full"><label for="horario">Horário *</label>
+                    <select id="horario">
+                        <option value="">Selecione o horário</option>
+                        <option value="08:00">08:00</option>
+                        <option value="09:00">09:00</option>
+                        <option value="10:00">10:00</option>
+                        <option value="11:00">11:00</option>
+                        <option value="14:00">14:00</option>
+                        <option value="15:00">15:00</option>
+                        <option value="16:00">16:00</option>
+                        <option value="17:00">17:00</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="btn-full" onclick="salvarAgendamento()">Confirmar Agendamento</button>
+            <p id="msg" class="mensagem"></p>
+        </div>
+    </div>
+
+    <div class="modal" id="loginInterno">
+        <div class="box">
+            <span class="close" onclick="fecharModal('loginInterno')">✕</span>
+            <h3>Acesso Interno</h3>
+            <p>Área restrita para funcionários</p>
+            <div id="loginArea"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="clientes">
+        <div class="box grande">
+            <span class="close" onclick="fecharModal('clientes')">✕</span>
+            <h3>Painel de Agendamentos</h3>
+            <ul id="listaClientes"></ul>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
