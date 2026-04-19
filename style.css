@@ -1,0 +1,253 @@
+:root {
+    --primary: #4ade80;
+    --primary-dark: #22c55e;
+    --text: #1e2937;
+    --gray: #64748b;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: var(--text);
+    line-height: 1.6;
+}
+
+/* HEADER */
+.header {
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.1rem 24px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo h1 {
+    font-size: 2.1rem;
+    color: #166534;
+    font-weight: 700;
+}
+
+.logo span {
+    font-size: 0.95rem;
+    color: var(--gray);
+}
+
+/* Menu */
+.menu {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.menu a {
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 500;
+}
+
+.nav-btn {
+    padding: 12px 28px;
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.nav-btn.primary {
+    background: var(--primary);
+    color: white;
+}
+
+.nav-btn.primary:hover {
+    background: var(--primary-dark);
+}
+
+.nav-btn.access {
+    background: #e2e8f0;
+    color: #1e2937;
+}
+
+.nav-btn.access:hover {
+    background: #cbd5e1;
+}
+
+/* HERO */
+.hero {
+    background: linear-gradient(135deg, #166534, #1e3a2f);
+    color: white;
+    padding: 140px 0 100px;
+    text-align: center;
+}
+
+.hero-logo {
+    height: 300px;
+    width: auto;
+    margin-bottom: 30px;
+    filter: drop-shadow(0 8px 15px rgba(0,0,0,0.35));
+}
+
+.hero h1 {
+    font-size: 3.4rem;
+    margin-bottom: 16px;
+    font-weight: 700;
+}
+
+.subtitle {
+    font-size: 1.38rem;
+    opacity: 0.93;
+}
+
+/* Seções */
+.destaques, .servicos, .contato {
+    padding: 80px 0;
+}
+
+h2 {
+    text-align: center;
+    font-size: 2.7rem;
+    margin-bottom: 3.5rem;
+    color: #166534;
+}
+
+.grid-destaques, .grid-servicos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.8rem;
+    padding: 0 24px;
+}
+
+.destaque-item, .card-servico {
+    background: white;
+    padding: 2.2rem 1.8rem;
+    border-radius: 16px;
+    text-align: center;
+    font-size: 1.22rem;
+    font-weight: 600;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+}
+
+.destaque-item:hover, .card-servico:hover {
+    transform: translateY(-8px);
+}
+
+/* Modais */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.72);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.box {
+    background: white;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 540px;
+    padding: 32px;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+}
+
+.box.grande {
+    max-width: 700px;
+}
+
+.close {
+    position: absolute;
+    top: 18px;
+    right: 25px;
+    font-size: 32px;
+    cursor: pointer;
+    color: #64748b;
+}
+
+.close:hover {
+    color: #ef4444;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.3rem;
+    margin: 25px 0;
+}
+
+.campo.full {
+    grid-column: 1 / -1;
+}
+
+.campo label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.campo input, .campo select {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    font-size: 1.02rem;
+}
+
+.btn-full {
+    width: 100%;
+    padding: 15px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.12rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.mensagem {
+    margin-top: 15px;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2.8rem;
+    }
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    .hero-logo {
+        height: 110px;
+    }
+}
