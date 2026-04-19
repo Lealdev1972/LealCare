@@ -1,5 +1,5 @@
 // =====================================================
-// script.js - LealCare (Versão Final com Regras Corrigidas)
+// script.js - LealCare (Regras Atualizadas)
 // =====================================================
 
 let funcionarios = JSON.parse(localStorage.getItem("funcionarios")) || [];
@@ -98,7 +98,7 @@ window.entrarFuncionario = function() {
     }, 800);
 };
 
-// ====================== AGENDAMENTO - REGRAS CORRIGIDAS ======================
+// ====================== AGENDAMENTO - COM REGRAS ======================
 window.salvarAgendamento = function() {
     const nome = document.getElementById("nome").value.trim();
     const email = document.getElementById("email").value.trim();
@@ -110,6 +110,15 @@ window.salvarAgendamento = function() {
 
     if (!nome || !email || !telefone || !pet || !data || !horario) {
         alert("Por favor, preencha todos os campos obrigatórios.");
+        return;
+    }
+
+    // === BLOQUEAR AGENDAMENTOS RETROATIVOS ===
+    const dataHoraAgendada = new Date(data + "T" + horario);
+    const agora = new Date();
+
+    if (dataHoraAgendada < agora) {
+        alert("Não é permitido agendar para data/hora que já passou.");
         return;
     }
 
@@ -131,7 +140,7 @@ window.salvarAgendamento = function() {
         return;
     }
 
-    // Salvar agendamento
+    // Salvar
     clientes.push({
         nome,
         email,
@@ -146,14 +155,10 @@ window.salvarAgendamento = function() {
 
     alert("✅ Agendamento realizado com sucesso!");
 
-    // Limpa o formulário automaticamente
     limparFormularioAgendamento();
-
-    // Fecha o modal
     fecharModal("agendamento");
 };
 
-// Função para limpar o formulário
 function limparFormularioAgendamento() {
     document.getElementById("nome").value = "";
     document.getElementById("email").value = "";
@@ -162,10 +167,9 @@ function limparFormularioAgendamento() {
     document.getElementById("tipo").value = "";
     document.getElementById("data").value = "";
     document.getElementById("horario").value = "";
-    document.getElementById("msg").innerHTML = "";
 }
 
-// ====================== LISTA DE AGENDAMENTOS ======================
+// ====================== LISTA DE AGENDAMENTOS COM CANCELAMENTO ======================
 function listarClientes() {
     const lista = document.getElementById("listaClientes");
     if (!lista) return;
@@ -180,12 +184,17 @@ function listarClientes() {
     if (agendamentosHoje.length === 0) {
         html += `<p style="color:#666; padding:10px;">Nenhum agendamento para hoje.</p>`;
     } else {
-        agendamentosHoje.forEach(c => {
+        agendamentosHoje.forEach((c, index) => {
+            const idGlobal = clientes.findIndex(item => item === c);
             html += `
                 <li style="background:#f0fdf4; padding:12px; margin:8px 0; border-radius:8px; border-left:4px solid #4ade80;">
                     <strong>${c.nome}</strong> — ${c.pet} (${c.tipo})<br>
                     📧 ${c.email} | 📞 ${c.telefone}<br>
                     🕒 ${c.horario}
+                    <button onclick="cancelarAgendamento(${idGlobal})" 
+                            style="float:right; background:#ef4444; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">
+                        Cancelar
+                    </button>
                 </li>`;
         });
     }
@@ -195,17 +204,32 @@ function listarClientes() {
     if (outros.length === 0) {
         html += `<p style="color:#666;">Nenhum outro agendamento registrado.</p>`;
     } else {
-        outros.forEach(c => {
+        outros.forEach((c, index) => {
+            const idGlobal = clientes.findIndex(item => item === c);
             html += `
                 <li style="padding:10px 0; border-bottom:1px solid #eee;">
                     <strong>${c.nome}</strong> — ${c.pet} (${c.tipo})<br>
                     📅 ${c.data} | 🕒 ${c.horario}
+                    <button onclick="cancelarAgendamento(${idGlobal})" 
+                            style="float:right; background:#ef4444; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">
+                        Cancelar
+                    </button>
                 </li>`;
         });
     }
 
     lista.innerHTML = html;
 }
+
+// ====================== CANCELAR AGENDAMENTO ======================
+window.cancelarAgendamento = function(index) {
+    if (confirm("Tem certeza que deseja cancelar este agendamento?")) {
+        clientes.splice(index, 1);
+        localStorage.setItem("clientes", JSON.stringify(clientes));
+        listarClientes();   // Atualiza a lista
+        alert("Agendamento cancelado com sucesso.");
+    }
+};
 
 // ====================== INICIALIZAÇÃO ======================
 window.addEventListener("load", () => {
